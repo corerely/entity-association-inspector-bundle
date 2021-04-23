@@ -12,6 +12,9 @@ final class DoctrineAssociationsFinder
     {
     }
 
+    /**
+     * Count number of association that relies on given entity using owning side field for join query
+     */
     public function count(object $entity, string $owningAssociation, string $owningFieldName): int
     {
         // Try to find related entities

@@ -17,23 +17,24 @@ final class AssociationMappingBuilder
     ) {
     }
 
+    /**
+     * Generate array of associations configuration
+     * where each key is an entity if any other entity relies on it
+     *
+     * For example if there is Product associated with Category as ManyToOne, array will look something like
+     * [ 'App\Entity\Category' =>
+     *      [
+     *          // This array keep all entities that relies on category with all fields mapping configuration
+     *          'App\Entity\Product' => [
+     *              'category' => [
+     *                  'owningSide' => [ManyToOne annotation configuration],
+     *                  'inverseSide' => [OneToMany annotation configuration],
+     *              ],
+     *          ],
+     *      ],
+     * ]
+     */
     public function getAssociationsMapping(): array
-    {
-        return $this->buildAssociationsMapping();
-    }
-
-    private function getInverseSideAnnotation(ManyToOne|OneToOne $annotation): OneToMany|OneToOne|null
-    {
-        if (empty($annotation->inversedBy)) {
-            return null;
-        }
-
-        $reflectionProperty = new \ReflectionProperty($annotation->targetEntity, $annotation->inversedBy);
-
-        return $this->annotationFinder->findInverseSideAnnotation($reflectionProperty);
-    }
-
-    private function buildAssociationsMapping(): array
     {
         $entityClassNames = $this->entityListProvider->all();
 
@@ -68,5 +69,19 @@ final class AssociationMappingBuilder
     private function annotationToArray(object $annotation): array
     {
         return (new AnnotationArrayConverter($annotation))->toArray();
+    }
+
+    /**
+     * Return inverse side annotation using owning side annotation if such is configured
+     */
+    private function getInverseSideAnnotation(ManyToOne|OneToOne $annotation): OneToMany|OneToOne|null
+    {
+        if (empty($annotation->inversedBy)) {
+            return null;
+        }
+
+        $reflectionProperty = new \ReflectionProperty($annotation->targetEntity, $annotation->inversedBy);
+
+        return $this->annotationFinder->findInverseSideAnnotation($reflectionProperty);
     }
 }

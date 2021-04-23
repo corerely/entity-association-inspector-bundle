@@ -6,7 +6,7 @@ namespace Corerely\EntityAssociationInspectorBundle;
 interface InspectorInterface
 {
     /**
-     * Check if given entity has associations to any other entity
+     * Check if it's safe to delete given entity.
      */
-    public function hasAssociations(object $entity): bool;
+    public function isSafeDelete(object $entity): bool;
 }

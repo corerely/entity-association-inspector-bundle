@@ -16,7 +16,7 @@ class EntityInspector implements InspectorInterface
     }
 
 
-    public function hasAssociations(object $entity): bool
+    public function isSafeDelete(object $entity): bool
     {
         $associationMapping = $this->associationMappingBuilder->getAssociationsMapping();
 

@@ -10,6 +10,9 @@ final class AnnotationArrayConverter
     {
     }
 
+    /**
+     * Get public properties of annotation and return as array of [name => value] pair
+     */
     public function toArray(): array
     {
         $reflectionClass = new \ReflectionClass($this->annotation);
