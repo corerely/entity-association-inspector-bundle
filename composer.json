@@ -22,9 +22,11 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^8.0"
+        "php": "^8.0",
+        "symfony/http-kernel": "^5.2",
+        "symfony/dependency-injection": "^5.2"
     },
     "require-dev": {
-
+        "symfony/phpunit-bridge": "^5.2"
     }
 }

@@ -5,7 +5,7 @@ namespace Corerely\EntityAssociationInspectorBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class EntityAssociationInspectorBundle extends Bundle
+class CorerelyEntityAssociationInspectorBundle extends Bundle
 {
 
 }

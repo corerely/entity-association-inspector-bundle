@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		   xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+	<services>
+		<service id="corerely_entity_association.inspector" class="Corerely\EntityAssociationInspectorBundle\EntityInspector">
+			<argument type="service" id="Corerely\EntityAssociationInspectorBundle\Mapping\AssociationMappingBuilder" />
+			<argument type="service" id="Corerely\EntityAssociationInspectorBundle\DoctrineAssociationsFinder" />
+		</service>
+		<service id="Corerely\EntityAssociationInspectorBundle\InspectorInterface" alias="corerely_entity_association.inspector" />
+
+		<service id="corerely_entity_association.entity_list_provider" class="Corerely\EntityAssociationInspectorBundle\Provider\DoctrineEntityListProvider">
+			<argument type="service" id="doctrine.orm.default_entity_manager" />
+		</service>
+		<service id="Corerely\EntityAssociationInspectorBundle\Provider\EntityListProviderInterface" alias="corerely_entity_association.entity_list_provider" />
+
+		<service id="Corerely\EntityAssociationInspectorBundle\Mapping\PropertyAssociationAnnotationFinder">
+			<argument type="service" id="annotations.cached_reader" />
+		</service>
+		<service id="Corerely\EntityAssociationInspectorBundle\Mapping\AssociationMappingBuilder">
+			<argument type="service" id="corerely_entity_association.entity_list_provider" />
+			<argument type="service" id="Corerely\EntityAssociationInspectorBundle\Mapping\PropertyAssociationAnnotationFinder" />
+		</service>
+
+		<service id="Corerely\EntityAssociationInspectorBundle\DoctrineAssociationsFinder">
+			<argument type="service" id="doctrine.orm.default_entity_manager" />
+		</service>
+	</services>
+</container>
