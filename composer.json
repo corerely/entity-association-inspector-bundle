@@ -1,0 +1,30 @@
+{
+    "name": "corerely/entity-association-inspector-bundle",
+    "description": "This bundle provide tool for inspection relations between entities.",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrii Oprysko",
+            "email": "anjey.link@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Corerely\\EntityAssociationInspectorBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Corerely\\EntityAssociationInspectorBundle\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.0"
+    },
+    "require-dev": {
+
+    }
+}
