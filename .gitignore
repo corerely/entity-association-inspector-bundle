@@ -3,3 +3,4 @@ vendor/
 composer.lock
 var
 .phpunit.result.cache
+.phpcs-cache
