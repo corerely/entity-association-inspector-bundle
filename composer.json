@@ -24,9 +24,13 @@
     "require": {
         "php": "^8.0",
         "symfony/http-kernel": "^5.2",
-        "symfony/dependency-injection": "^5.2"
+        "symfony/dependency-injection": "^5.2",
+        "symfony/config": "^5.2",
+        "doctrine/orm": "^2.8",
+        "doctrine/doctrine-bundle": "^2.3"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^5.2"
+        "symfony/phpunit-bridge": "^5.2",
+        "symfony/framework-bundle": "^5.2"
     }
 }
