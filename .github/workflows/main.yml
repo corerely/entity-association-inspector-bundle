@@ -1,0 +1,54 @@
+name: Full CI functions/unit tests
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+    push:
+        branches: [ 'master', 'develop' ]
+    pull_request:
+        branches: [ 'master', 'develop' ]
+
+
+jobs:
+    build:
+        runs-on: ubuntu-18.04
+
+        strategy:
+            fail-fast: true
+            matrix:
+                php-versions: ['8.0']
+
+        steps:
+            - uses: actions/checkout@v2
+
+            # https://github.com/shivammathur/setup-php (community)
+            - name: Setup PHP ${{ matrix.php-versions }}, extensions and composer with shivammathur/setup-php
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-versions }}
+              env:
+                  update: true
+
+            - name: Composer validate
+              run: composer validate
+
+            - name: Get Composer Cache Directory
+              id: composer-cache
+              run: |
+                  echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            - uses: actions/cache@v2
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-composer-
+
+            - name: Install Composer dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress
+
+            - name: Run code sniffer check
+              run: ./vendor/bin/phpcs -n
+
+            - name: Run tests
+              run: ./vendor/bin/simple-phpunit
