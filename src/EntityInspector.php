@@ -50,7 +50,6 @@ class EntityInspector implements InspectorInterface
         return true;
     }
 
-
     protected function isCascadeRemoveEnabled(array $mappingConfig): bool
     {
         $orphanRemoval = $mappingConfig['inverseSide']['orphanRemoval'] ?? false;

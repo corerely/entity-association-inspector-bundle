@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Corerely\EntityAssociationInspectorBundle;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
 
 final class DoctrineAssociationManager implements AssociationManagerInterface
 {
@@ -20,7 +19,6 @@ final class DoctrineAssociationManager implements AssociationManagerInterface
         // Try to find related entities
         $repository = $this->entityManager->getRepository($owningAssociation);
 
-        /** @var QueryBuilder $qb */
         $qb = $repository->createQueryBuilder('a');
 
         $count = $qb
