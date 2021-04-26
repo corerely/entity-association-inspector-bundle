@@ -14,7 +14,6 @@
 		<service id="corerely_entity_association.entity_list_provider" class="Corerely\EntityAssociationInspectorBundle\Provider\DoctrineEntityListProvider">
 			<argument type="service" id="doctrine.orm.default_entity_manager" />
 		</service>
-		<service id="Corerely\EntityAssociationInspectorBundle\Provider\EntityListProviderInterface" alias="corerely_entity_association.entity_list_provider" />
 
 		<service id="Corerely\EntityAssociationInspectorBundle\Mapping\PropertyAssociationAnnotationFinder">
 			<argument type="service" id="annotations.cached_reader" />
@@ -23,11 +22,9 @@
 			<argument type="service" id="corerely_entity_association.entity_list_provider" />
 			<argument type="service" id="Corerely\EntityAssociationInspectorBundle\Mapping\PropertyAssociationAnnotationFinder" />
 		</service>
-		<service id="Corerely\EntityAssociationInspectorBundle\Mapping\AssociationMappingBuilderInterface" alias="corerely_entity_association.mapping_builder" />
 
 		<service id="corerely_entity_association.manager" class="Corerely\EntityAssociationInspectorBundle\DoctrineAssociationManager">
 			<argument type="service" id="doctrine.orm.default_entity_manager" />
 		</service>
-		<service id="Corerely\EntityAssociationInspectorBundle\AssociationManagerInterface" alias="corerely_entity_association.manager" />
 	</services>
 </container>
