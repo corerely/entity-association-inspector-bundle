@@ -6,7 +6,7 @@ namespace Corerely\EntityAssociationInspectorBundle;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
-final class DoctrineAssociationsFinder
+final class DoctrineAssociationManager implements AssociationManagerInterface
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -15,7 +15,7 @@ final class DoctrineAssociationsFinder
     /**
      * Count number of association that relies on given entity using owning side field for join query
      */
-    public function count(object $entity, string $owningAssociation, string $owningFieldName): int
+    public function countAssociations(object $entity, string $owningAssociation, string $owningFieldName): int
     {
         // Try to find related entities
         $repository = $this->entityManager->getRepository($owningAssociation);

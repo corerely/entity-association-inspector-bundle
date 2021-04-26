@@ -3,15 +3,15 @@ declare(strict_types = 1);
 
 namespace Corerely\EntityAssociationInspectorBundle;
 
-use Corerely\EntityAssociationInspectorBundle\Mapping\AssociationMappingBuilder;
+use Corerely\EntityAssociationInspectorBundle\Mapping\AssociationMappingBuilderInterface;
 
 class EntityInspector implements InspectorInterface
 {
     public const CASCADE_DELETE = 'remove';
 
     public function __construct(
-        private AssociationMappingBuilder $associationMappingBuilder,
-        private DoctrineAssociationsFinder $finder,
+        private AssociationMappingBuilderInterface $associationMappingBuilder,
+        private AssociationManagerInterface $associationManager,
     ) {
     }
 
@@ -36,7 +36,7 @@ class EntityInspector implements InspectorInterface
                 }
 
                 // Try to find related entities
-                $count = $this->finder->count($entity, $owningAssociation, $field);
+                $count = $this->associationManager->countAssociations($entity, $owningAssociation, $field);
 
                 // If there is at least one active relation, entity can't be deleted
                 if ($count > 0) {
