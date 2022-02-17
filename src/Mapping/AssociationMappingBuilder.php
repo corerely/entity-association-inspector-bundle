@@ -3,68 +3,57 @@ declare(strict_types=1);
 
 namespace Corerely\EntityAssociationInspectorBundle\Mapping;
 
-use Corerely\EntityAssociationInspectorBundle\Provider\EntityListProviderInterface;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\EntityManagerInterface;
 
-final class AssociationMappingBuilder implements AssociationMappingBuilderInterface
+final class AssociationMappingBuilder
 {
 
-    public function __construct(
-        private EntityListProviderInterface $entityListProvider,
-        private PropertyAssociationAnnotationFinder $annotationFinder,
-    ) {
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
     }
 
+    /**
+     * Generate array of associations configuration
+     * where each key is an entity if any other entity relies on it
+     *
+     * For example if there is Category associated Product as ManyToOne array will looks like
+     * [ 'App\Entity\Product' =>
+     *      [
+     *           'association' => App\Entity\Category,
+     *           'fieldName' => 'product',
+     *      ],
+     * ]
+     */
     public function getAssociationsMapping(): array
     {
-        $entityClassNames = $this->entityListProvider->all();
+        $entities = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
 
         $associationsMapping = [];
-        foreach ($entityClassNames as $entityClassName) {
-            $reflectionClass = new \ReflectionClass($entityClassName);
+        foreach ($entities as $entityClassName) {
+            $metadata = $this->entityManager->getClassMetadata($entityClassName);
 
-            foreach ($reflectionClass->getProperties(\ReflectionProperty::IS_PRIVATE) as $reflectionProperty) {
-                $annotation = $this->annotationFinder->findOwningSideAnnotation($reflectionProperty);
+            foreach ($metadata->getAssociationMappings() as $mapping) {
+                // If owning side, check if "inversedBy" is orphanRemoval or cascade remove, otherwise need to register "targetEntity" as one that need to be checked before delete
+                if ($mapping['isOwningSide']) {
+                    $targetEntity = $mapping['targetEntity'];
 
-                if (null !== $annotation) {
-                    $annotationData = [
-                        'owningSide' => $this->annotationToArray($annotation),
-                        'inverseSide' => null,
-                    ];
+                    if ($mapping['inversedBy']) {
+                        $targetMetadata = $this->entityManager->getClassMetadata($targetEntity);
 
-                    if ($inverseAnnotation = $this->getInverseSideAnnotation($annotation)) {
-                        $annotationData['inverseSide'] = $this->annotationToArray($inverseAnnotation);
+                        $targetAssociationMapping = $targetMetadata->getAssociationMapping($mapping['inversedBy']);
+                        if ($targetAssociationMapping['orphanRemoval'] || $targetAssociationMapping['isCascadeRemove']) {
+                            continue;
+                        }
                     }
 
-                    $association = $annotation->targetEntity;
-                    $property = $reflectionProperty->getName();
-
-                    $associationsMapping[$association][$entityClassName][$property] = $annotationData;
+                    $associationsMapping[$targetEntity][] = [
+                        'association' => $entityClassName,
+                        'fieldName' => $mapping['fieldName'],
+                    ];
                 }
             }
         }
 
         return $associationsMapping;
-    }
-
-    private function annotationToArray(object $annotation): array
-    {
-        return (new AnnotationArrayConverter($annotation))->toArray();
-    }
-
-    /**
-     * Return inverse side annotation using owning side annotation if such is configured
-     */
-    private function getInverseSideAnnotation(ManyToOne|OneToOne $annotation): OneToMany|OneToOne|null
-    {
-        if (empty($annotation->inversedBy)) {
-            return null;
-        }
-
-        $reflectionProperty = new \ReflectionProperty($annotation->targetEntity, $annotation->inversedBy);
-
-        return $this->annotationFinder->findInverseSideAnnotation($reflectionProperty);
     }
 }

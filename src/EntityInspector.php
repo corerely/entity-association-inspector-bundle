@@ -3,58 +3,39 @@ declare(strict_types=1);
 
 namespace Corerely\EntityAssociationInspectorBundle;
 
-use Corerely\EntityAssociationInspectorBundle\Mapping\AssociationMappingBuilderInterface;
+use Corerely\EntityAssociationInspectorBundle\Mapping\AssociationMappingBuilder;
+use Corerely\EntityAssociationInspectorBundle\Repository\AssociationRepository;
+use Doctrine\Common\Util\ClassUtils;
 
-class EntityInspector implements InspectorInterface
+final class EntityInspector
 {
-    public const CASCADE_DELETE = 'remove';
-
-    public function __construct(
-        private AssociationMappingBuilderInterface $associationMappingBuilder,
-        private AssociationManagerInterface $associationManager,
-    ) {
+    public function __construct(private AssociationRepository $repository, private AssociationMappingBuilder $mappingBuilder)
+    {
     }
-
 
     public function isSafeDelete(object $entity): bool
     {
-        $associationMapping = $this->associationMappingBuilder->getAssociationsMapping();
+        $associationMapping = $this->mappingBuilder->getAssociationsMapping();
+        $entityClassName = ClassUtils::getClass($entity);
 
         // If entity has no association
-        if (! array_key_exists($entity::class, $associationMapping)) {
+        if (!array_key_exists($entityClassName, $associationMapping)) {
             return true;
         }
 
-        $entityMapping = $associationMapping[$entity::class];
+        $associations = $associationMapping[$entityClassName];
+        foreach ($associations as $association) {
+            $owningAssociation = $association['association'];
+            $fieldName = $association['fieldName'];
 
-        foreach ($entityMapping as $owningAssociation => $fields) {
-            foreach ($fields as $field => $mappingConfig) {
-                // If cascade remove is enabled for relation,
-                // we can skip finding related entities
-                if ($this->isCascadeRemoveEnabled($mappingConfig)) {
-                    continue;
-                }
-
-                // Try to find related entities
-                $count = $this->associationManager->countAssociations($entity, $owningAssociation, $field);
-
-                // If there is at least one active relation, entity can't be deleted
-                if ($count > 0) {
-                    return false;
-                }
+            $count = $this->repository->countAssociations($entity, $owningAssociation, $fieldName);
+            // If there is at least one active relation, entity can't be deleted
+            if ($count > 0) {
+                return false;
             }
         }
 
-        // This point is reached in case all relation fields are cascade remove
-        // or there is no active relations between given entity and it's associations
+        // There is no active relations between given entity and it's associations
         return true;
-    }
-
-    protected function isCascadeRemoveEnabled(array $mappingConfig): bool
-    {
-        $orphanRemoval = $mappingConfig['inverseSide']['orphanRemoval'] ?? false;
-        $cascade = $mappingConfig['inverseSide']['cascade'] ?? [];
-
-        return true === $orphanRemoval || in_array(self::CASCADE_DELETE, $cascade, true);
     }
 }
