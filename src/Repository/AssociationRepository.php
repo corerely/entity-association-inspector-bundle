@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Corerely\EntityAssociationInspectorBundle;
+namespace Corerely\EntityAssociationInspectorBundle\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 
-final class DoctrineAssociationManager implements AssociationManagerInterface
+final class AssociationRepository
 {
+
     public function __construct(private EntityManagerInterface $entityManager)
     {
     }
