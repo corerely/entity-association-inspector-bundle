@@ -1,54 +1,39 @@
-name: Full CI functions/unit tests
+name: Bundle Test
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
     push:
-        branches: [ 'master', 'develop' ]
+        branches: [ 'master' ]
     pull_request:
-        branches: [ 'master', 'develop' ]
-
-
+        branches: [ 'master' ]
 jobs:
     build:
-        runs-on: ubuntu-18.04
+        runs-on: ${{ matrix.operating-system }}
+        env:
+            SYMFONY_DEPRECATIONS_HELPER: disabled
 
+        name: PHP ${{ matrix.php }} and Symfony ${{ matrix.symfony }}
         strategy:
-            fail-fast: true
             matrix:
-                php-versions: ['8.0']
+                operating-system: [ ubuntu-latest ]
+                php: [ '8.0', '8.1' ]
+                symfony: [ '5.4.*', '6.0.*' ]
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@master
 
-            # https://github.com/shivammathur/setup-php (community)
-            - name: Setup PHP ${{ matrix.php-versions }}, extensions and composer with shivammathur/setup-php
+            - name: Setup PHP ${{ matrix.php }}
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: ${{ matrix.php-versions }}
+                  php-version: ${{ matrix.php }}
+                  tools: flex
+
+            - name: Download dependencies
               env:
-                  update: true
+                  SYMFONY_REQUIRE: ${{ matrix.symfony }}
+              uses: ramsey/composer-install@v1
 
-            - name: Composer validate
-              run: composer validate
+            - name: Run code sniffer
+              run: ./vendor/bin/phpcs
 
-            - name: Get Composer Cache Directory
-              id: composer-cache
-              run: |
-                  echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-            - uses: actions/cache@v2
-              with:
-                  path: ${{ steps.composer-cache.outputs.dir }}
-                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}-composer-
-
-            - name: Install Composer dependencies
-              run: composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress
-
-            - name: Run code sniffer check
-              run: ./vendor/bin/phpcs -n
-
-            - name: Run tests
-              run: ./vendor/bin/simple-phpunit
+            - name: Run test suite on PHP ${{ matrix.php }} and Symfony ${{ matrix.symfony }}
+              run: ./vendor/bin/phpunit

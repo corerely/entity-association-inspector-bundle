@@ -13,7 +13,6 @@ final class EntityInspector
     {
     }
 
-
     public function isSafeDelete(object $entity): bool
     {
         $associationMapping = $this->mappingBuilder->getAssociationsMapping();
