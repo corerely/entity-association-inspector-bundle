@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class AssociationMappingBuilder
 {
+    private ?array $mapping = null;
 
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -25,6 +26,11 @@ final class AssociationMappingBuilder
      * ]
      */
     public function getAssociationsMapping(): array
+    {
+        return $this->mapping ??= $this->buildMapping();
+    }
+
+    private function buildMapping(): array
     {
         $entities = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
 
