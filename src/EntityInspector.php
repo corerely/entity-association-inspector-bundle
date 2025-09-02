@@ -15,7 +15,7 @@ final readonly class EntityInspector
     ) {
     }
 
-    public function isSafeDelete(object $entity): bool
+    public function hasAssociations(object $entity): bool
     {
         $associationMapping = $this->mappingBuilder->getAssociationsMapping();
         $entityClassName = ClassUtils::getClass($entity);
