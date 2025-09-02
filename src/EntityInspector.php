@@ -7,13 +7,15 @@ use Corerely\EntityAssociationInspectorBundle\Mapping\AssociationMappingBuilder;
 use Corerely\EntityAssociationInspectorBundle\Repository\AssociationRepository;
 use Doctrine\Common\Util\ClassUtils;
 
-final class EntityInspector
+final readonly class EntityInspector
 {
-    public function __construct(private AssociationRepository $repository, private AssociationMappingBuilder $mappingBuilder)
-    {
+    public function __construct(
+        private AssociationRepository $repository,
+        private AssociationMappingBuilder $mappingBuilder,
+    ) {
     }
 
-    public function isSafeDelete(object $entity): bool
+    public function hasAssociations(object $entity): bool
     {
         $associationMapping = $this->mappingBuilder->getAssociationsMapping();
         $entityClassName = ClassUtils::getClass($entity);

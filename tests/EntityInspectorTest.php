@@ -29,7 +29,7 @@ class EntityInspectorTest extends KernelTestCase
         $this->assertCount(3, $product->getComments());
 
         $inspector = $this->getInspector();
-        $this->assertTrue($inspector->isSafeDelete($product->object()));
+        $this->assertTrue($inspector->hasAssociations($product->_real()));
     }
 
     public function testDeleteManyToOneWithInverseSide(): void
@@ -42,7 +42,7 @@ class EntityInspectorTest extends KernelTestCase
         $comment = $product->getComments()->first();
 
         $inspector = $this->getInspector();
-        $this->assertTrue($inspector->isSafeDelete($comment));
+        $this->assertTrue($inspector->hasAssociations($comment));
     }
 
     public function testDeleteManyToOneWithoutInverseSide(): void
@@ -56,7 +56,7 @@ class EntityInspectorTest extends KernelTestCase
         $this->assertNotNull($product->getCategory());
 
         $inspector = $this->getInspector();
-        $this->assertTrue($inspector->isSafeDelete($product->object()));
+        $this->assertTrue($inspector->hasAssociations($product->_real()));
     }
 
     public function testDeleteOneToManyWithNoCascadeRemove(): void
@@ -72,9 +72,9 @@ class EntityInspectorTest extends KernelTestCase
         $inspector = $this->getInspector();
 
         // Cannot delete category with relation
-        $this->assertFalse($inspector->isSafeDelete($category1->object()));
+        $this->assertFalse($inspector->hasAssociations($category1->_real()));
         // But can delete category without relation
-        $this->assertTrue($inspector->isSafeDelete($category2->object()));
+        $this->assertTrue($inspector->hasAssociations($category2->_real()));
     }
 
     public function testDeleteOneToOneOwningSide(): void
@@ -88,7 +88,7 @@ class EntityInspectorTest extends KernelTestCase
 
         $inspector = $this->getInspector();
 
-        $this->assertTrue($inspector->isSafeDelete($product->object()));
+        $this->assertTrue($inspector->hasAssociations($product->_real()));
     }
 
     public function testDeleteOneToOneInverseSide(): void
@@ -103,8 +103,8 @@ class EntityInspectorTest extends KernelTestCase
 
         $inspector = $this->getInspector();
 
-        $this->assertFalse($inspector->isSafeDelete($owner1->object()));
-        $this->assertTrue($inspector->isSafeDelete($owner2->object()));
+        $this->assertFalse($inspector->hasAssociations($owner1->_real()));
+        $this->assertTrue($inspector->hasAssociations($owner2->_real()));
     }
 
     public function testDeleteManyToManyOwningSide(): void
@@ -118,7 +118,7 @@ class EntityInspectorTest extends KernelTestCase
 
         $inspector = $this->getInspector();
 
-        $this->assertTrue($inspector->isSafeDelete($product->object()));
+        $this->assertTrue($inspector->hasAssociations($product->_real()));
     }
 
     public function testDeleteManyToManyInverseSide(): void
@@ -134,9 +134,9 @@ class EntityInspectorTest extends KernelTestCase
 
         $inspector = $this->getInspector();
 
-        $this->assertFalse($inspector->isSafeDelete($tag1->object()));
-        $this->assertFalse($inspector->isSafeDelete($tag2->object()));
-        $this->assertTrue($inspector->isSafeDelete($tag3->object()));
+        $this->assertFalse($inspector->hasAssociations($tag1->_real()));
+        $this->assertFalse($inspector->hasAssociations($tag2->_real()));
+        $this->assertTrue($inspector->hasAssociations($tag3->_real()));
     }
 
     private function getInspector(): EntityInspector

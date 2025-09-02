@@ -9,8 +9,9 @@ final class AssociationMappingBuilder
 {
     private ?array $mapping = null;
 
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    ) {
     }
 
     /**

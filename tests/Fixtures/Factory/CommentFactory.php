@@ -4,22 +4,20 @@ declare(strict_types=1);
 namespace Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Factory;
 
 use Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Entity\Comment;
-use Zenstruck\Foundry\ModelFactory;
-use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @method static Comment|Proxy createOne(array $attributes = [])
- * @method static Comment[]|Proxy[] createMany(int $number, $attributes = [])
+ * @extends PersistentProxyObjectFactory<Comment>
  */
-final class CommentFactory extends ModelFactory
+final class CommentFactory extends PersistentProxyObjectFactory
 {
 
-    protected function getDefaults(): array
+    protected function defaults(): array
     {
         return [];
     }
 
-    protected static function getClass(): string
+    public static function class(): string
     {
         return Comment::class;
     }

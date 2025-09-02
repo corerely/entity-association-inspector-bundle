@@ -15,8 +15,8 @@ jobs:
         strategy:
             matrix:
                 operating-system: [ ubuntu-latest ]
-                php: [ '8.0', '8.1' ]
-                symfony: [ '5.4.*', '6.0.*' ]
+                php: [ '8.3', '8.4' ]
+                symfony: [ '7.0.*' ]
 
         steps:
             - uses: actions/checkout@master
@@ -30,7 +30,7 @@ jobs:
             - name: Download dependencies
               env:
                   SYMFONY_REQUIRE: ${{ matrix.symfony }}
-              uses: ramsey/composer-install@v1
+              uses: ramsey/composer-install@v2
 
             - name: Run code sniffer
               run: ./vendor/bin/phpcs
