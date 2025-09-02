@@ -17,7 +17,7 @@ class EntityInspectorTest extends KernelTestCase
 {
     use ResetDatabase, Factories;
 
-    public function testDeleteOneToManyWithEnabledCascadeRemove(): void
+    public function testRemoveOneToManyWithEnabledCascadeRemove(): void
     {
         $product = ProductFactory::createOne([
             'comments' => CommentFactory::new()->many(3),
@@ -29,10 +29,10 @@ class EntityInspectorTest extends KernelTestCase
         $this->assertCount(3, $product->getComments());
 
         $inspector = $this->getInspector();
-        $this->assertTrue($inspector->hasAssociations($product->_real()));
+        $this->assertTrue($inspector->isSafeToRemove($product->_real()));
     }
 
-    public function testDeleteManyToOneWithInverseSide(): void
+    public function testRemoveManyToOneWithInverseSide(): void
     {
         $product = ProductFactory::createOne([
             'comments' => CommentFactory::new()->many(1),
@@ -42,10 +42,10 @@ class EntityInspectorTest extends KernelTestCase
         $comment = $product->getComments()->first();
 
         $inspector = $this->getInspector();
-        $this->assertTrue($inspector->hasAssociations($comment));
+        $this->assertTrue($inspector->isSafeToRemove($comment));
     }
 
-    public function testDeleteManyToOneWithoutInverseSide(): void
+    public function testRemoveManyToOneWithoutInverseSide(): void
     {
         $category = CategoryFactory::createOne();
         $product = ProductFactory::createOne([
@@ -56,10 +56,10 @@ class EntityInspectorTest extends KernelTestCase
         $this->assertNotNull($product->getCategory());
 
         $inspector = $this->getInspector();
-        $this->assertTrue($inspector->hasAssociations($product->_real()));
+        $this->assertTrue($inspector->isSafeToRemove($product->_real()));
     }
 
-    public function testDeleteOneToManyWithNoCascadeRemove(): void
+    public function testRemoveOneToManyWithNoCascadeRemove(): void
     {
         [$category1, $category2] = CategoryFactory::createMany(2);
         $product = ProductFactory::createOne([
@@ -72,12 +72,12 @@ class EntityInspectorTest extends KernelTestCase
         $inspector = $this->getInspector();
 
         // Cannot delete category with relation
-        $this->assertFalse($inspector->hasAssociations($category1->_real()));
+        $this->assertFalse($inspector->isSafeToRemove($category1->_real()));
         // But can delete category without relation
-        $this->assertTrue($inspector->hasAssociations($category2->_real()));
+        $this->assertTrue($inspector->isSafeToRemove($category2->_real()));
     }
 
-    public function testDeleteOneToOneOwningSide(): void
+    public function testRemoveOneToOneOwningSide(): void
     {
         $product = ProductFactory::createOne([
             'owner' => OwnerFactory::createOne(),
@@ -88,10 +88,10 @@ class EntityInspectorTest extends KernelTestCase
 
         $inspector = $this->getInspector();
 
-        $this->assertTrue($inspector->hasAssociations($product->_real()));
+        $this->assertTrue($inspector->isSafeToRemove($product->_real()));
     }
 
-    public function testDeleteOneToOneInverseSide(): void
+    public function testRemoveOneToOneInverseSide(): void
     {
         [$owner1, $owner2] = OwnerFactory::createMany(2);
         $product = ProductFactory::createOne([
@@ -103,11 +103,11 @@ class EntityInspectorTest extends KernelTestCase
 
         $inspector = $this->getInspector();
 
-        $this->assertFalse($inspector->hasAssociations($owner1->_real()));
-        $this->assertTrue($inspector->hasAssociations($owner2->_real()));
+        $this->assertFalse($inspector->isSafeToRemove($owner1->_real()));
+        $this->assertTrue($inspector->isSafeToRemove($owner2->_real()));
     }
 
-    public function testDeleteManyToManyOwningSide(): void
+    public function testRemoveManyToManyOwningSide(): void
     {
         $product = ProductFactory::createOne([
             'tags' => TagFactory::new()->many(3),
@@ -118,10 +118,10 @@ class EntityInspectorTest extends KernelTestCase
 
         $inspector = $this->getInspector();
 
-        $this->assertTrue($inspector->hasAssociations($product->_real()));
+        $this->assertTrue($inspector->isSafeToRemove($product->_real()));
     }
 
-    public function testDeleteManyToManyInverseSide(): void
+    public function testRemoveManyToManyInverseSide(): void
     {
         [$tag1, $tag2, $tag3] = TagFactory::createMany(3);
 
@@ -134,9 +134,9 @@ class EntityInspectorTest extends KernelTestCase
 
         $inspector = $this->getInspector();
 
-        $this->assertFalse($inspector->hasAssociations($tag1->_real()));
-        $this->assertFalse($inspector->hasAssociations($tag2->_real()));
-        $this->assertTrue($inspector->hasAssociations($tag3->_real()));
+        $this->assertFalse($inspector->isSafeToRemove($tag1->_real()));
+        $this->assertFalse($inspector->isSafeToRemove($tag2->_real()));
+        $this->assertTrue($inspector->isSafeToRemove($tag3->_real()));
     }
 
     private function getInspector(): EntityInspector

@@ -15,7 +15,7 @@ final readonly class EntityInspector
     ) {
     }
 
-    public function hasAssociations(object $entity): bool
+    public function isSafeToRemove(object $entity): bool
     {
         $associationMapping = $this->mappingBuilder->getAssociationsMapping();
         $entityClassName = ClassUtils::getClass($entity);
