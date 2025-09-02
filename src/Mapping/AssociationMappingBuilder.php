@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class AssociationMappingBuilder
 {
-    private ?array $mapping = null;
+    private array $mapping = [];
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -15,52 +15,47 @@ final class AssociationMappingBuilder
     }
 
     /**
-     * Generate array of associations configuration
-     * where each key is an entity if any other entity relies on it
+     * Generate array of associations
      *
-     * For example if there is Category associated Product as ManyToOne array will looks like
-     * [ 'App\Entity\Product' =>
+     * For example if there is Category associated with Product as ManyToOne array will looks like for Product
+     * [
      *      [
      *           'association' => App\Entity\Category,
      *           'fieldName' => 'product',
      *      ],
      * ]
      */
-    public function getAssociationsMapping(): array
+    public function getAssociationsMapping(string $entityClassName): array
     {
-        return $this->mapping ??= $this->buildMapping();
+        return $this->mapping[$entityClassName] ??= $this->buildMapping($entityClassName);
     }
 
-    private function buildMapping(): array
+    private function buildMapping(string $entityClassName): array
     {
-        $entities = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
+        $associations = [];
+        $metadata = $this->entityManager->getClassMetadata($entityClassName);
 
-        $associationsMapping = [];
-        foreach ($entities as $entityClassName) {
-            $metadata = $this->entityManager->getClassMetadata($entityClassName);
+        foreach ($metadata->getAssociationMappings() as $mapping) {
+            // If owning side, check if "inversedBy" is orphanRemoval or cascade remove, otherwise need to register "targetEntity" as one that need to be checked before delete
+            if ($mapping['isOwningSide']) {
+                $targetEntity = $mapping['targetEntity'];
 
-            foreach ($metadata->getAssociationMappings() as $mapping) {
-                // If owning side, check if "inversedBy" is orphanRemoval or cascade remove, otherwise need to register "targetEntity" as one that need to be checked before delete
-                if ($mapping['isOwningSide']) {
-                    $targetEntity = $mapping['targetEntity'];
+                if ($mapping['inversedBy']) {
+                    $targetMetadata = $this->entityManager->getClassMetadata($targetEntity);
+                    $targetAssociationMapping = $targetMetadata->getAssociationMapping($mapping['inversedBy']);
 
-                    if ($mapping['inversedBy']) {
-                        $targetMetadata = $this->entityManager->getClassMetadata($targetEntity);
-
-                        $targetAssociationMapping = $targetMetadata->getAssociationMapping($mapping['inversedBy']);
-                        if ($targetAssociationMapping['orphanRemoval'] || $targetAssociationMapping['isCascadeRemove']) {
-                            continue;
-                        }
+                    if ($targetAssociationMapping['orphanRemoval'] || $targetAssociationMapping['isCascadeRemove']) {
+                        continue;
                     }
-
-                    $associationsMapping[$targetEntity][] = [
-                        'association' => $entityClassName,
-                        'fieldName' => $mapping['fieldName'],
-                    ];
                 }
+
+                $associations[] = [
+                    'association' => $entityClassName,
+                    'fieldName' => $mapping['fieldName'],
+                ];
             }
         }
 
-        return $associationsMapping;
+        return $associations;
     }
 }
