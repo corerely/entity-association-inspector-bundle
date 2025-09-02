@@ -4,22 +4,20 @@ declare(strict_types=1);
 namespace Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Factory;
 
 use Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Entity\Owner;
-use Zenstruck\Foundry\ModelFactory;
-use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @method static Owner|Proxy createOne(array $attributes = [])
- * @method static Owner[]|Proxy[] createMany(int $number, $attributes = [])
+ * @extends PersistentProxyObjectFactory<Owner>
  */
-final class OwnerFactory extends ModelFactory
+final class OwnerFactory extends PersistentProxyObjectFactory
 {
 
-    protected static function getClass(): string
+    public static function class(): string
     {
         return Owner::class;
     }
 
-    protected function getDefaults(): array
+    protected function defaults(): array
     {
         return [];
     }

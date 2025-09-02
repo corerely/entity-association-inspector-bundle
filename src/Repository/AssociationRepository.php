@@ -5,11 +5,12 @@ namespace Corerely\EntityAssociationInspectorBundle\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 
-final class AssociationRepository
+final readonly class AssociationRepository
 {
 
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+    ) {
     }
 
     /**

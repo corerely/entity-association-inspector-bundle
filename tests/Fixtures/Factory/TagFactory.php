@@ -4,22 +4,20 @@ declare(strict_types=1);
 namespace Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Factory;
 
 use Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Entity\Tag;
-use Zenstruck\Foundry\ModelFactory;
-use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @method static Tag|Proxy createOne(array $attributes = [])
- * @method static Tag[]|Proxy[] createMany(int $number, $attributes = [])
+ * @extends PersistentProxyObjectFactory<Tag>
  */
-final class TagFactory extends ModelFactory
+final class TagFactory extends PersistentProxyObjectFactory
 {
 
-    protected static function getClass(): string
+    public static function class(): string
     {
         return Tag::class;
     }
 
-    protected function getDefaults(): array
+    protected function defaults(): array
     {
         return [];
     }

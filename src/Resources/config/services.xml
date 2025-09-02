@@ -7,7 +7,7 @@
 	<services>
 		<service id="corerely_entity_association.inspector" class="Corerely\EntityAssociationInspectorBundle\EntityInspector">
 			<argument type="service" id="corerely_entity_association.association_repository" />
-			<argument type="service" id="corerely_entity_association.assocition_mapping_builder" />
+			<argument type="service" id="corerely_entity_association.association_mapping_builder" />
 		</service>
 		<service id="Corerely\EntityAssociationInspectorBundle\EntityInspector" alias="corerely_entity_association.inspector" />
 
@@ -15,7 +15,7 @@
 			<argument type="service" id="doctrine.orm.default_entity_manager" />
 		</service>
 
-		<service id="corerely_entity_association.assocition_mapping_builder" class="Corerely\EntityAssociationInspectorBundle\Mapping\AssociationMappingBuilder">
+		<service id="corerely_entity_association.association_mapping_builder" class="Corerely\EntityAssociationInspectorBundle\Mapping\AssociationMappingBuilder">
 			<argument type="service" id="doctrine.orm.default_entity_manager" />
 		</service>
 	</services>
