@@ -26,9 +26,9 @@ final class AssociationMappingBuilder
      *      ],
      * ]
      */
-    public function getAssociationsMapping(): array
+    public function getAssociationsMapping(string $entityClassName): array
     {
-        return $this->mapping ??= $this->buildMapping();
+        return ($this->mapping ??= $this->buildMapping())[$entityClassName] ?? [];
     }
 
     private function buildMapping(): array
