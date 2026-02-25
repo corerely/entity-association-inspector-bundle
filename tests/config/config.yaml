@@ -9,7 +9,7 @@ doctrine:
         url: sqlite:///%kernel.project_dir%/../var/test.sqlite
 
     orm:
-        auto_generate_proxy_classes: true
+        #auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
         mappings:
@@ -19,7 +19,5 @@ doctrine:
                 prefix: 'Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Entity'
                 alias: App
 
-# See full configuration: https://github.com/zenstruck/foundry#full-default-bundle-configuration
 zenstruck_foundry:
-    # Whether to auto-refresh proxies by default (https://github.com/zenstruck/foundry#auto-refresh)
-    auto_refresh_proxies: true
+    enable_auto_refresh_with_lazy_objects: true

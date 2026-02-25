@@ -9,14 +9,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class BundleInitializationTest extends KernelTestCase
 {
-    private ContainerInterface $testContainer;
+    private ?ContainerInterface $testContainer = null;
 
     protected function setUp(): void
     {
         parent::setUp();
-
         self::bootKernel();
+
         $this->testContainer = self::getContainer();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->testContainer = null;
+
+        parent::tearDown();
     }
 
     public function testEntityInspectorService(): void

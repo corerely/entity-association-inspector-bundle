@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Factory;
 
 use Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Entity\Product;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<Product>
+ * @extends PersistentObjectFactory<Product>
  */
-final class ProductFactory extends PersistentProxyObjectFactory
+final class ProductFactory extends PersistentObjectFactory
 {
 
     protected function defaults(): array
