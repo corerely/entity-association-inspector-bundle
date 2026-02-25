@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Factory;
 
 use Corerely\EntityAssociationInspectorBundle\Tests\Fixtures\Entity\Comment;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<Comment>
+ * @extends PersistentObjectFactory<Comment>
  */
-final class CommentFactory extends PersistentProxyObjectFactory
+final class CommentFactory extends PersistentObjectFactory
 {
 
     protected function defaults(): array
